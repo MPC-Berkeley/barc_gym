@@ -37,7 +37,7 @@ class PIDWrapper:
                                                pacejka_b_rear=5.0,
                                                pacejka_c_front=2.28,
                                                pacejka_c_rear=2.28,
-                                               code_gen=True,
+                                               code_gen=False,
                                                jit=True,
                                                opt_flag='O3')
         self.dyn_model = CasadiDynamicCLBicycle(t0, dynamics_config, track=track_obj)
