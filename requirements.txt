@@ -6,6 +6,6 @@ tqdm
 pillow
 loguru
 requests
-gym~=0.26.2
-pygame~=2.6.1
-scikit-image~=0.21.0
+gym
+pygame
+scikit-image
