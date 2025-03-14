@@ -21,6 +21,7 @@ from mpclab_common.models.dynamics_models import CasadiDynamicBicycle, CasadiDyn
 from loguru import logger
 
 from gym_carla.envs.utils.renderer import LMPCVisualizer
+from gym_carla.envs.utils.lazy_renderer import LazyLMPCVisualizer
 from mpclab_simulation.dynamics_simulator import DynamicsSimulator
 
 
@@ -28,7 +29,8 @@ class BarcEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, track_name, t0=0., dt=0.1, dt_sim=0.01, max_n_laps=100,
-                 do_render=True, enable_camera=False, host='localhost', port=2000):
+                 do_render=True, enable_camera=False, host='localhost', port=2000,
+                 in_colab=False):
         self.track_obj = get_track(track_name)
         # self.track_obj.slack = 1
         self.t0 = t0  # Constant
@@ -76,7 +78,10 @@ class BarcEnv(gym.Env):
         else:
             self.camera_bridge = None
 
-        self.visualizer = LMPCVisualizer(track_obj=self.track_obj, VL=VL, VW=VW)
+        if in_colab:
+            self.visualizer = LazyLMPCVisualizer(track_obj=self.track_obj, VL=VL, VW=VW)
+        else:
+            self.visualizer = LMPCVisualizer(track_obj=self.track_obj, VL=VL, VW=VW)
 
         self.sim_state: VehicleState = None
         self.last_state: VehicleState = None
