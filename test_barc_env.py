@@ -3,8 +3,8 @@ import numpy as np
 
 import gym_carla
 
-from controllers.barc_mpcc_conv import MPCCConvWrapper
-from controllers.barc_lmpc import LMPCWrapper
+# from controllers.barc_mpcc_conv import MPCCConvWrapper
+# from controllers.barc_lmpc import LMPCWrapper
 from controllers.barc_pid import PIDWrapper
 
 from loguru import logger
@@ -15,8 +15,8 @@ def main(controller: str, seed=0):
     This is a minimalistic test script to test LMPC with the BARC gym environment.
     """
     controller_cls_mp = {
-        'lmpc': LMPCWrapper,
-        'mpcc-conv': MPCCConvWrapper,
+        # 'lmpc': LMPCWrapper,
+        # 'mpcc-conv': MPCCConvWrapper,
         'pid': PIDWrapper,
     }
     dt = 0.1
@@ -25,8 +25,9 @@ def main(controller: str, seed=0):
     env = gym.make('barc-v0', track_name='L_track_barc',
                    t0=t0, dt=dt, dt_sim=dt_sim,
                    do_render=True,
-                   max_n_laps=20,
-                   enable_camera=False)
+                   max_n_laps=2,
+                   enable_camera=False,
+                   in_colab=True, )
     # expert = LMPCWrapper(dt=dt, t0=t0,
     #                      track_obj=env.get_track())
     expert = controller_cls_mp[controller](dt=dt, t0=t0,
