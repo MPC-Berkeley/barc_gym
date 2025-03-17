@@ -26,8 +26,8 @@ def main(controller: str, seed=0):
                    t0=t0, dt=dt, dt_sim=dt_sim,
                    do_render=True,
                    max_n_laps=2,
-                   enable_camera=False,
-                   in_colab=True, )
+                   enable_camera=True,
+                   in_colab=False, )
     # expert = LMPCWrapper(dt=dt, t0=t0,
     #                      track_obj=env.get_track())
     expert = controller_cls_mp[controller](dt=dt, t0=t0,
