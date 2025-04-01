@@ -88,6 +88,9 @@ class BarcEnv(gym.Env):
 
         # Additional information fields
         self.lap_speed = []
+        self.v_buffer = []
+        self.u_buffer = []
+        self.traj = []
         self.lap_no = 0
 
         observation_space = dict(
@@ -196,12 +199,18 @@ class BarcEnv(gym.Env):
         self.t = self.t0
         self.lap_start = self.t
         self.lap_speed = []
+
         self.lap_no = 0
 
         self._reset_speed_stats()
         self.eps_len = 1
 
-        return self._get_obs(), self._get_info()
+        obs, info = self._get_obs(), self._get_info()
+        self.traj = [ob['gps'].copy()]
+        self.v_buffer = [ob['velocity'].copy()]
+        self.u_buffer = []
+
+        return obs, info
 
     def _update_speed_stats(self):
         v = np.linalg.norm([self.sim_state.v.v_long, self.sim_state.v.v_tran])
@@ -240,6 +249,10 @@ class BarcEnv(gym.Env):
         truncated = truncated or self._get_truncated()
         info = self._get_info()
 
+        self.traj.append(ob['gps'].copy())
+        self.v_buffer.append(ob['velocity'].copy())
+        self.u_buffer.append(ac.copy())
+
         if terminated:
             logger.info(
                 f"Lap {self.lap_no} finished in {info['lap_time']:.1f} s. "
@@ -251,6 +264,37 @@ class BarcEnv(gym.Env):
             self.eps_len = 1
 
         return obs, rew, terminated, truncated, info
+
+    def show_debug_plot(self):
+        traj = np.asarray(self.traj)
+        v_buffer = np.asarray(self.v_buffer)
+        u_buffer = np.asarray(self.u_buffer)
+
+        fig, ((ax_traj, ax_v), (ax_u_a, ax_u_d)) = plt.subplots(2, 2, figsize=(9, 9))
+
+        env.get_track().plot_map(ax=ax_traj)
+        ax_traj.plot(traj[:, 0], traj[:, 1])
+        ax_traj.set_aspect('equal')
+        ax_traj.set_title("Trajectory playback")
+        ax_traj.set_xlabel('x(m)')
+        ax_traj.set_ylabel('y(m)')
+
+        ax_v.plot(np.arange(v_buffer.shape[0]) * dt, v_buffer[:, 0])
+        ax_v.set_xlabel('t(s)')
+        ax_v.set_ylabel('v(m/s)')
+        ax_v.set_title("Velocity playback")
+
+        ax_u_a.plot(np.arange(u_buffer.shape[0]) * dt, u_buffer[:, 0])
+        ax_u_a.set_xlabel('t(s)')
+        ax_u_a.set_label('$u_a$')
+        ax_u_a.set_title("Acceleration input playback")
+
+        ax_u_d.plot(np.arange(u_buffer.shape[0]) * dt, u_buffer[:, 1])
+        ax_u_d.set_xlabel('t(s)')
+        ax_u_d.set_ylabel('$u_{steer}$')
+        ax_u_d.set_title("Steering input playback")
+
+        plt.show()
 
     def render(self):
         if not self.do_render:
