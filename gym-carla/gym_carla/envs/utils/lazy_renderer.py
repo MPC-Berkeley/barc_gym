@@ -162,7 +162,7 @@ class LazyLMPCVisualizer:
 
         animation = FuncAnimation(fig=self.fig, func=update, frames=len(self.v_data), init_func=init, blit=True,
                                   interval=50)
-        plt.show()
+        # plt.show()
         return animation
         # return HTML(animation.to_html5_video())
 
