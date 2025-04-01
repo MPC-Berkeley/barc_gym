@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 
 import gym_carla
@@ -24,15 +24,15 @@ def main(controller: str, seed=0):
     t0 = 0
     env = gym.make('barc-v0', track_name='L_track_barc',
                    t0=t0, dt=dt, dt_sim=dt_sim,
-                   do_render=True,
+                   do_render=False,
                    max_n_laps=2,
-                   enable_camera=True,
+                   enable_camera=False,
                    in_colab=False, )
     # expert = LMPCWrapper(dt=dt, t0=t0,
     #                      track_obj=env.get_track())
     expert = controller_cls_mp[controller](dt=dt, t0=t0,
-                                           track_obj=env.get_track())
-    env.bind_controller(expert)
+                                           track_obj=env.unwrapped.get_track())
+    env.unwrapped.bind_controller(expert)
 
     ob, info = env.reset(seed=seed, options={'spawning': 'fixed'})
     expert.reset(seed=seed, options=info)
@@ -51,6 +51,7 @@ def main(controller: str, seed=0):
         if truncated:
             print(f"Average lap time: {np.mean(lap_time[1:])}, Std: {np.std(lap_time[1:])}")
             logger.info("Rollout truncated.")
+            env.unwrapped.show_debug_plot()
             ob, info = env.reset(seed=seed, options={'spawning': 'fixed'})
             expert.reset(seed=seed, options=info)
 

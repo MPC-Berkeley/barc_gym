@@ -1,5 +1,5 @@
-setuptools~=75.1.0
-numpy~=1.24
+# setuptools~=75.1.0
+numpy~=1.21
 pyomo
 casadi
 matplotlib
@@ -8,6 +8,7 @@ tqdm
 pillow
 loguru
 requests
-gym~=0.26.2
+# gym~=0.26.2
+gymnasium
 pygame
 scikit-image

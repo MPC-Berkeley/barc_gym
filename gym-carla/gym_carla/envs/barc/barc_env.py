@@ -2,7 +2,8 @@ import copy
 import time
 from typing import Tuple, Optional, Dict, Any, Union
 
-from gym.core import ActType, ObsType
+import gymnasium as gym
+from gymnasium.core import ActType, ObsType
 
 from mpclab_common.pytypes import VehicleState, VehicleActuation, VehiclePrediction, Position, ParametricPose, \
     BodyLinearVelocity, OrientationEuler, BodyAngularVelocity
@@ -10,8 +11,8 @@ from mpclab_common.pytypes import VehicleState, VehicleActuation, VehiclePredict
 import numpy as np
 # import utils.data_fitting as fit
 
-import gym
-from gym import spaces
+# import gym
+from gymnasium import spaces
 # from utils.data_utils import DynamicsDataset as DD
 
 # from barc_gym.mpclab_simulation.mpclab_python_simulation.utils.renderer import LMPCVisualizer
@@ -206,8 +207,8 @@ class BarcEnv(gym.Env):
         self.eps_len = 1
 
         obs, info = self._get_obs(), self._get_info()
-        self.traj = [ob['gps'].copy()]
-        self.v_buffer = [ob['velocity'].copy()]
+        self.traj = [obs['gps'].copy()]
+        self.v_buffer = [obs['velocity'].copy()]
         self.u_buffer = []
 
         return obs, info
@@ -249,9 +250,9 @@ class BarcEnv(gym.Env):
         truncated = truncated or self._get_truncated()
         info = self._get_info()
 
-        self.traj.append(ob['gps'].copy())
-        self.v_buffer.append(ob['velocity'].copy())
-        self.u_buffer.append(ac.copy())
+        self.traj.append(obs['gps'].copy())
+        self.v_buffer.append(obs['velocity'].copy())
+        self.u_buffer.append(action.copy())
 
         if terminated:
             logger.info(
@@ -266,30 +267,31 @@ class BarcEnv(gym.Env):
         return obs, rew, terminated, truncated, info
 
     def show_debug_plot(self):
+        from matplotlib import pyplot as plt
         traj = np.asarray(self.traj)
         v_buffer = np.asarray(self.v_buffer)
         u_buffer = np.asarray(self.u_buffer)
 
         fig, ((ax_traj, ax_v), (ax_u_a, ax_u_d)) = plt.subplots(2, 2, figsize=(9, 9))
 
-        env.get_track().plot_map(ax=ax_traj)
+        self.get_track().plot_map(ax=ax_traj)
         ax_traj.plot(traj[:, 0], traj[:, 1])
         ax_traj.set_aspect('equal')
         ax_traj.set_title("Trajectory playback")
         ax_traj.set_xlabel('x(m)')
         ax_traj.set_ylabel('y(m)')
 
-        ax_v.plot(np.arange(v_buffer.shape[0]) * dt, v_buffer[:, 0])
+        ax_v.plot(np.arange(v_buffer.shape[0]) * self.dt, v_buffer[:, 0])
         ax_v.set_xlabel('t(s)')
         ax_v.set_ylabel('v(m/s)')
         ax_v.set_title("Velocity playback")
 
-        ax_u_a.plot(np.arange(u_buffer.shape[0]) * dt, u_buffer[:, 0])
+        ax_u_a.plot(np.arange(u_buffer.shape[0]) * self.dt, u_buffer[:, 0])
         ax_u_a.set_xlabel('t(s)')
         ax_u_a.set_label('$u_a$')
         ax_u_a.set_title("Acceleration input playback")
 
-        ax_u_d.plot(np.arange(u_buffer.shape[0]) * dt, u_buffer[:, 1])
+        ax_u_d.plot(np.arange(u_buffer.shape[0]) * self.dt, u_buffer[:, 1])
         ax_u_d.set_xlabel('t(s)')
         ax_u_d.set_ylabel('$u_{steer}$')
         ax_u_d.set_title("Steering input playback")
