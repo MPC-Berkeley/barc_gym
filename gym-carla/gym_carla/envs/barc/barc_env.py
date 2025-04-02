@@ -71,8 +71,8 @@ class BarcEnv(gym.Env):
                                                    pacejka_b_rear=5.0,
                                                    pacejka_c_front=2.28,
                                                    pacejka_c_rear=2.28)
-        # dynamics_simulator = DynamicsSimulator(t, sim_dynamics_config, delay=[0.1, 0.1], track=track_obj)
-        self.dynamics_simulator = DynamicsSimulator(t0, sim_dynamics_config, delay=None, track=self.track_obj)
+        # dynamics_simulator = DynamicsSimulator(t, sim_dynamics_config, delay=None, track=track_obj)
+        self.dynamics_simulator = DynamicsSimulator(t0, sim_dynamics_config, delay=[0.1, 0.1], track=self.track_obj)
         if enable_camera:
             from gym_carla.envs.barc.cameras.carla_bridge import CarlaConnector
             self.camera_bridge = CarlaConnector(self.track_name, host=self.host, port=self.port)
