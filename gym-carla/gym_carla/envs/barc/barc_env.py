@@ -70,7 +70,7 @@ class BarcEnv(gym.Env):
                                                    pacejka_b_front=5.0,
                                                    pacejka_b_rear=5.575055782097995, #5.0
                                                    pacejka_c_front=2.28,
-                                                   pacejka_c_rear=2.0524659447890445 #2.28)
+                                                   pacejka_c_rear=2.0524659447890445) #2.28)
         # dynamics_simulator = DynamicsSimulator(t, sim_dynamics_config, delay=None, track=track_obj)
         self.dynamics_simulator = DynamicsSimulator(t0, sim_dynamics_config, delay=[0.1, 0.1], track=self.track_obj)
         if enable_camera:
