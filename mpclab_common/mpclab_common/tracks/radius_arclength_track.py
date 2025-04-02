@@ -742,6 +742,7 @@ class RadiusArclengthTrack():
         if cl_coord is None:
             raise ValueError('Point is out of the track!')
 
+        cl_coord[0] = np.mod(cl_coord[0], self.track_length)
         return cl_coord
     
     """
