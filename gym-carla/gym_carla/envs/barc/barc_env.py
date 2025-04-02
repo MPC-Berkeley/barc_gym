@@ -266,37 +266,40 @@ class BarcEnv(gym.Env):
 
         return obs, rew, terminated, truncated, info
 
-    def show_debug_plot(self):
+    def show_debug_plot(self, axes=None):
         from matplotlib import pyplot as plt
         traj = np.asarray(self.traj)
         v_buffer = np.asarray(self.v_buffer)
         u_buffer = np.asarray(self.u_buffer)
 
-        fig, ((ax_traj, ax_v), (ax_u_a, ax_u_d)) = plt.subplots(2, 2, figsize=(9, 9))
+        if axes is not None:
+            ((ax_traj, ax_v), (ax_u_a, ax_u_d)) = axes
+        else:
+            fig, ((ax_traj, ax_v), (ax_u_a, ax_u_d)) = plt.subplots(2, 2, figsize=(9, 9))
 
         self.get_track().plot_map(ax=ax_traj)
-        ax_traj.plot(traj[:, 0], traj[:, 1])
+        ax_traj.plot(traj[:, 0], traj[:, 1], label='simulated')
         ax_traj.set_aspect('equal')
         ax_traj.set_title("Trajectory playback")
         ax_traj.set_xlabel('x(m)')
         ax_traj.set_ylabel('y(m)')
 
-        ax_v.plot(np.arange(v_buffer.shape[0]) * self.dt, v_buffer[:, 0])
+        ax_v.plot(np.arange(v_buffer.shape[0]) * self.dt, v_buffer[:, 0], label='simulated')
         ax_v.set_xlabel('t(s)')
         ax_v.set_ylabel('v(m/s)')
         ax_v.set_title("Velocity playback")
 
-        ax_u_a.plot(np.arange(u_buffer.shape[0]) * self.dt, u_buffer[:, 0])
+        ax_u_a.plot(np.arange(u_buffer.shape[0]) * self.dt, u_buffer[:, 0], label='simulated')
         ax_u_a.set_xlabel('t(s)')
         ax_u_a.set_label('$u_a$')
         ax_u_a.set_title("Acceleration input playback")
 
-        ax_u_d.plot(np.arange(u_buffer.shape[0]) * self.dt, u_buffer[:, 1])
+        ax_u_d.plot(np.arange(u_buffer.shape[0]) * self.dt, u_buffer[:, 1], label='simulated')
         ax_u_d.set_xlabel('t(s)')
         ax_u_d.set_ylabel('$u_{steer}$')
         ax_u_d.set_title("Steering input playback")
 
-        plt.show()
+        # plt.show()
 
     def render(self):
         if not self.do_render:
