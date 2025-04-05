@@ -403,7 +403,7 @@ def main():
     import os
     from mpclab_common.models.model_types import DynamicBicycleConfig
 
-    track_name = 'L_track_barc_reverse'
+    track_name = 'L_track_barc'
     track_obj = get_track(track_name)
 
     vehicle_config = DynamicBicycleConfig(wheel_dist_front=0.132,
@@ -442,7 +442,7 @@ def main():
     # raceline_2, _ = compute_raceline(track_name, vehicle_config, vehicle_constraints, raceline_to_avoid=raceline_data)
 
     plot = True
-    save = False
+    save = True
 
     if save:
         save_dir = os.path.expanduser('~/barc_data/racelines')
