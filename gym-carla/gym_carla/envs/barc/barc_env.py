@@ -64,13 +64,13 @@ class BarcEnv(gym.Env):
                                                    # bump_dist_front=0.15,
                                                    # bump_dist_rear=0.15,
                                                    # bump_dist_center=0.1,
-                                                   mass=2.2187,
-                                                   yaw_inertia=0.02723,
+                                                   mass=2.258,
+                                                   yaw_inertia= 0.02771, #0.02723
                                                    wheel_friction=0.9,
                                                    pacejka_b_front=5.0,
-                                                   pacejka_b_rear=5.0,
+                                                   pacejka_b_rear=5.575055782097995, #5.0
                                                    pacejka_c_front=2.28,
-                                                   pacejka_c_rear=2.28)
+                                                   pacejka_c_rear=2.0524659447890445) #2.28)
         # dynamics_simulator = DynamicsSimulator(t, sim_dynamics_config, delay=None, track=track_obj)
         self.dynamics_simulator = DynamicsSimulator(t0, sim_dynamics_config, delay=[0.1, 0.1], track=self.track_obj)
         if enable_camera:
