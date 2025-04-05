@@ -1,23 +1,28 @@
-:: Step 10: Run CARLA Simulator and Python script
-echo Running CARLA Simulator...
-cd CARLA\Carla-0.10.0-Win64-Shipping
+@echo off
+setlocal
 
-:: Check if CARLA is already running
-tasklist /FI "IMAGENAME eq CarlaUnreal.exe" 2>NUL | find /I /N "CarlaUnreal.exe">NUL
-if %ERRORLEVEL% NEQ 0 (
-    :: CARLA is not running, start it
-    echo Starting CarlaUnreal.exe with low quality settings...
-    start "" "CarlaUnreal.exe" -quality-level=Low
-    echo Waiting 30 seconds for CARLA to initialize...
-    timeout /t 30 /nobreak >NUL
-) else (
-    :: CARLA is already running
-    echo CARLA simulator is already running. Skipping launch...
+:: Configurable Variables
+SET CARLA_PATH=CARLA\Carla-0.10.0-Win64-Shipping
+SET SCRIPT_PATH=barc_gym
+SET CARLA_QUALITY=Low
+SET WAIT_TIME=30
+SET SKIP_CARLA_LAUNCH=0
+
+:: Step 1: Optional CARLA launch
+IF "%SKIP_CARLA_LAUNCH%"=="0" (
+    tasklist /FI "IMAGENAME eq CarlaUnreal.exe" | find "CarlaUnreal.exe" >NUL || (
+        echo Starting CARLA with %CARLA_QUALITY% quality...
+        start "" "%CARLA_PATH%\CarlaUnreal.exe" -quality-level=%CARLA_QUALITY%
+        echo Waiting %WAIT_TIME% seconds for initialization...
+        timeout /t %WAIT_TIME% /nobreak >NUL
+    )
+) ELSE (
+    echo Skipping CARLA launch as requested.
 )
 
-echo Running PID script in gym-carla...
-cd ..\..\barc_gym
-:: python run_pid_carla_gym.py --town L_track
+:: Step 2: Run Python script
+echo Running BARC environment test...
+cd %SCRIPT_PATH%
 python test_barc_env.py --controller pid
 
-
+endlocal
