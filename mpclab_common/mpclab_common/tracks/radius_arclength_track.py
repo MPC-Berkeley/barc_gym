@@ -724,7 +724,7 @@ class RadiusArclengthTrack():
                         d = np.abs(cur_ang) * np.abs(r)
                         s = self.key_pts[i - 1, 3] + d
                         e_psi = np.unwrap([psi_s + cur_ang, psi])[1] - (psi_s + cur_ang)
-                        cl_coord = (s, e_y, e_psi)
+                        cl_coord = (np.mod(s, self.track_length), e_y, e_psi)
                         break
                     else:
                         continue
@@ -742,7 +742,6 @@ class RadiusArclengthTrack():
         if cl_coord is None:
             raise ValueError('Point is out of the track!')
 
-        cl_coord[0] = np.mod(cl_coord[0], self.track_length)
         return cl_coord
     
     """
